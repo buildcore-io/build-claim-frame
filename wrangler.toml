@@ -1,0 +1,7 @@
+name = "build-claim-frame"
+compatibility_date = "2023-12-01"
+compatibility_flags = [ "nodejs_compat" ]
+preserve_file_names = false
+
+[site]
+bucket = "./public"
