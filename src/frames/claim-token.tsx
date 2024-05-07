@@ -1,11 +1,13 @@
 import { Button } from 'frog';
-import { getUser } from '../services/neynar.service';
+import { getUser, isUserFollowingChannel } from '../services/neynar.service';
+import { didEthUserAlreadyClaim } from '../services/buildcore.service';
 
 export const claimFrame = async (c: any) => {
   const { frameData } = c;
   const { fid } = frameData;
   let failed;
   const user = await getUser(fid);
+  const isUserFollowingJustBuild = await isUserFollowingChannel(fid);
   // console.log(user);
   if (!user) {
     failed = 'Unable to get Farcaster user. Try again.';
@@ -13,20 +15,38 @@ export const claimFrame = async (c: any) => {
     failed = 'You must have at least one ETH verified address linked to your profile.';
   }
 
-  if (!user?.viewer_context?.followed_by && !failed) {
-    return c.res({
-      image: 'https://i.imgur.com/SfaOUlv.png',
-      intents: [
-        <Button.Link
-          href={
-            'https://justbuild-claim-v1.buildcore.io/deep-link/' +
-            user.verified_addresses?.eth_addresses
-          }
-        >
-          Validate SMR
-        </Button.Link>,
-      ],
-    });
+  // Check if user already claimed.
+  const alreadyClaimed = await didEthUserAlreadyClaim(user.verified_addresses?.eth_addresses);
+  if (isUserFollowingJustBuild && !failed) {
+    if (alreadyClaimed) {
+      return c.res({
+        image: 'https://i.imgur.com/xaOAOjH.png',
+        intents: [
+          <Button.Link
+            href={
+              'https://justbuild-claim-v1.buildcore.io/deep-link/' +
+              user.verified_addresses?.eth_addresses
+            }
+          >
+            Claim MORE!
+          </Button.Link>,
+        ],
+      });
+    } else {
+      return c.res({
+        image: 'https://i.imgur.com/SfaOUlv.png',
+        intents: [
+          <Button.Link
+            href={
+              'https://justbuild-claim-v1.buildcore.io/deep-link/' +
+              user.verified_addresses?.eth_addresses
+            }
+          >
+            Validate SMR
+          </Button.Link>,
+        ],
+      });
+    }
   } else if (failed) {
     return c.res({
       image: (
@@ -65,7 +85,7 @@ export const claimFrame = async (c: any) => {
     return c.res({
       image: 'https://i.imgur.com/QfmQW2s.gif',
       intents: [
-        <Button.Redirect location="https://warpcast.com/justbuild">Follow</Button.Redirect>,
+        <Button.Redirect location="https://warpcast.com/~/channel/justbuild">Follow</Button.Redirect>,
       ],
     });
   }
