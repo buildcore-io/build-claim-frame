@@ -1,6 +1,6 @@
 import { Button } from 'frog';
 import { getUser, isUserFollowingChannel } from '../services/neynar.service';
-import { didEthUserAlreadyClaim } from '../services/buildcore.service';
+import { getUserClaim } from '../services/buildcore.service';
 
 export const claimFrame = async (c: any) => {
   const { frameData } = c;
@@ -16,7 +16,14 @@ export const claimFrame = async (c: any) => {
   }
 
   // Check if user already claimed.
-  const alreadyClaimed = await didEthUserAlreadyClaim(user.verified_addresses?.eth_addresses);
+  let alreadyClaimed = false;
+  for (let adr of user.verified_addresses?.eth_addresses) {
+    // If any of them was already claimed we show the pop-up
+    const claim = await getUserClaim(adr);
+    if (!!claim?.ethAddressVerified) {
+      alreadyClaimed = true;
+    }
+  }
   if (isUserFollowingJustBuild && !failed) {
     if (alreadyClaimed) {
       return c.res({
@@ -24,12 +31,12 @@ export const claimFrame = async (c: any) => {
         intents: [
           <Button.Link
             href={
-              'https://justbuild-claim-v1.buildcore.io/deep-link/' +
+              'https://build-claim.buildcore.io/deep-link/' +
               user.verified_addresses?.eth_addresses
             }
           >
             Claim MORE!
-          </Button.Link>,
+          </Button.Link>
         ],
       });
     } else {
@@ -38,7 +45,7 @@ export const claimFrame = async (c: any) => {
         intents: [
           <Button.Link
             href={
-              'https://justbuild-claim-v1.buildcore.io/deep-link/' +
+              'https://build-claim.buildcore.io/deep-link/' +
               user.verified_addresses?.eth_addresses
             }
           >

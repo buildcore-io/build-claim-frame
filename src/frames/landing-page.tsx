@@ -6,6 +6,9 @@ export const landingFrame = (c: any) => {
 
   return c.res({
     image: "https://i.imgur.com/vOHX7up.png",
-    intents: [<Button action="/claim">Claim Token!</Button>],
+    intents: [
+              <Button action="/claim">Claim Token!</Button>,
+              <Button action="/claim-details">Claim Status</Button>
+            ],
   });
 };

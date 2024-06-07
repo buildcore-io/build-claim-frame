@@ -6,6 +6,7 @@ import { config } from './environments/prod';
 import { claimFrame } from './frames/claim-token';
 import { landingFrame } from './frames/landing-page';
 import { deepLinkPage } from './pages/deep-link';
+import { claimDetails } from './frames/claim-details';
 
 export const app = new Frog({
   // Supply a Hub to enable frame verification.
@@ -14,6 +15,7 @@ export const app = new Frog({
 
 app.frame('/', landingFrame);
 app.frame('/claim', claimFrame);
+app.frame('/claim-details', claimDetails);
 app.hono.get('/deep-link/:eth', deepLinkPage);
 
 const isCloudflareWorker = typeof caches !== 'undefined';

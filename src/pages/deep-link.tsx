@@ -18,6 +18,19 @@ export function deepLinkPage(c: any): any {
           <div class="text-2xl font-bold">
             <span>Select wallet to process your payment</span>
           </div>
+
+          <div class="text-xl">
+            <span>To validate your address we will have you send 1 SMR and then we will immediately send it back. We use the Tangle to initiate the claim process for both L1 and L2 SOON tokens.</span>
+          </div>
+
+          <div class="text-xl">
+            <span>Note: For the L2 claim, we don't need you to use SMR wallet linked to those tokens. We only use it to initiate the claim process.</span>
+          </div>
+
+          <div class="text-xl">
+            <span>Once you finish above, you can validate your claim by refreshing frame or by looking at tangle explorer block's response.</span>
+          </div>
+
           <div class="flex flex-col space-x-12 items-center justify-center w-full lg:flex-row lg:w-auto">
               <a
                 href={getBloomDeepLink(c.req.param('eth'))}
